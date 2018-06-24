@@ -1,0 +1,74 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.0.BUILD-SNAPSHOT'
+	}
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+		jcenter()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "net.ltgt.gradle:gradle-apt-plugin:0.16"
+		classpath "io.franzbecker:gradle-lombok:1.14"
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "net.ltgt.apt"
+apply plugin: "io.franzbecker.gradle-lombok"
+
+group = 'br.pucrs'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+
+dependencies {
+
+	compileOnly "org.projectlombok:lombok:1.18.0"
+	annotationProcessor "org.projectlombok:lombok:1.18.0"
+//	apt "org.projectlombok:lombok:1.18.0"
+
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.0.3.RELEASE'
+	compile("org.springframework.boot:spring-boot-starter-web")
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '2.0.3.RELEASE'
+	testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.1.1'
+
+	compile group: 'io.springfox', name: 'springfox-data-rest', version: '2.9.2'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.8.0'
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.8.0'
+
+
+}
+
+lombok { // optional: values below are the defaults
+	version = "1.16.20"
+	sha256 = "c5178b18caaa1a15e17b99ba5e4023d2de2ebc18b58cde0f5a04ca4b31c10e6d"
+}
+
+jar {
+	from compileJava
+
+	manifest {
+		attributes 'Main-Class': 'App',
+				'Class-Path': configurations.runtime.files.collect {"$it.name"}.join(' ')
+	}
+
+	exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
